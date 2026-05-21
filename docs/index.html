@@ -3,19 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="mobile-web-app-capable" content="yes">
-    <title>飞机大战 ✈ 手机版</title>
+    <title>飞机大战</title>
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             background: #0a0a2e;
             display: flex;
             justify-content: center;
             align-items: center;
-            min-height: 100vh;
-            min-height: 100dvh;
-            font-family: 'Arial', sans-serif;
+            height: 100vh;
+            height: 100dvh;
+            font-family: Arial, sans-serif;
             overflow: hidden;
             touch-action: none;
             user-select: none;
@@ -23,7 +21,7 @@
         }
         #gameContainer {
             position: relative;
-            width: 100%;
+            width: 100vw;
             max-width: 480px;
             height: 100vh;
             height: 100dvh;
@@ -32,36 +30,27 @@
             display: block;
             width: 100%;
             height: 100%;
-            border: none;
-            border-radius: 0;
             background: #0a0a2e;
-            touch-action: none;
         }
         #ui {
             position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
+            top: 0; left: 0; right: 0; bottom: 0;
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
             pointer-events: none;
         }
-        #ui > * { pointer-events: auto; }
-        #startScreen, #gameOverScreen, #pauseScreen {
+        #startScreen, #gameOverScreen {
             text-align: center;
             color: #fff;
             display: none;
-            padding: 20px;
+            pointer-events: auto;
         }
-        #startScreen.active, #gameOverScreen.active, #pauseScreen.active {
-            display: block;
-        }
+        #startScreen.active, #gameOverScreen.active { display: block; }
         #startScreen h1 {
             font-size: clamp(32px, 10vw, 48px);
-            margin-bottom: 8px;
+            margin-bottom: 10px;
             text-shadow: 0 0 20px rgba(0, 150, 255, 0.8);
         }
         #startScreen p {
@@ -78,17 +67,14 @@
             font-size: clamp(18px, 5vw, 22px);
             border-radius: 30px;
             cursor: pointer;
-            transition: transform 0.2s, box-shadow 0.2s;
+            transition: transform 0.15s;
             box-shadow: 0 4px 20px rgba(0, 100, 255, 0.4);
-            touch-action: manipulation;
+            pointer-events: auto;
         }
-        .btn:active {
-            transform: scale(0.95);
-        }
+        .btn:active { transform: scale(0.95); }
         #score {
             position: absolute;
-            top: clamp(10px, 2vh, 15px);
-            left: clamp(10px, 2vw, 15px);
+            top: 12px; left: 12px;
             color: #fff;
             font-size: clamp(16px, 4vw, 20px);
             font-weight: bold;
@@ -99,8 +85,7 @@
         #score.active { display: block; }
         #lives {
             position: absolute;
-            top: clamp(10px, 2vh, 15px);
-            right: clamp(10px, 2vw, 15px);
+            top: 12px; right: 12px;
             color: #ff4444;
             font-size: clamp(18px, 4.5vw, 22px);
             text-shadow: 0 0 10px rgba(255, 0, 0, 0.5);
@@ -110,10 +95,9 @@
         #lives.active { display: block; }
         #highScore {
             position: absolute;
-            top: clamp(36px, 6vh, 45px);
-            left: clamp(10px, 2vw, 15px);
+            top: 40px; left: 12px;
             color: #ffdd00;
-            font-size: clamp(13px, 3.2vw, 16px);
+            font-size: clamp(12px, 3.2vw, 15px);
             text-shadow: 0 0 10px rgba(255, 220, 0, 0.4);
             display: none;
             z-index: 10;
@@ -125,93 +109,20 @@
             text-shadow: 0 0 20px rgba(255, 0, 0, 0.6);
             margin-bottom: 10px;
         }
-        #gameOverScreen .final-score {
+        .final-score {
             font-size: clamp(24px, 7vw, 28px);
             color: #ffdd00;
             margin-bottom: 5px;
         }
-        #gameOverScreen .best-score {
-            font-size: clamp(15px, 4vw, 18px);
+        .high-score-text {
+            font-size: clamp(14px, 4vw, 18px);
             color: #88ccff;
-            margin-bottom: 20px;
-        }
-        #gameOverScreen .sub-text {
-            font-size: clamp(12px, 3.2vw, 14px);
-            color: #88aacc;
             margin-bottom: 5px;
         }
-        #restartBtn {
-            margin-top: 10px;
-        }
-        #pauseBtn {
-            position: absolute;
-            top: clamp(10px, 2vh, 15px);
-            right: clamp(50px, 12vw, 60px);
-            color: rgba(255,255,255,0.5);
-            font-size: clamp(22px, 5.5vw, 28px);
-            cursor: pointer;
-            display: none;
-            z-index: 10;
-            width: 40px;
-            height: 40px;
-            align-items: center;
-            justify-content: center;
-            touch-action: manipulation;
-        }
-        #pauseBtn.active { display: flex; }
-        #touchHint {
-            position: absolute;
-            bottom: clamp(8px, 2vh, 15px);
-            left: 0;
-            right: 0;
-            text-align: center;
-            color: #556688;
-            font-size: clamp(11px, 2.8vw, 13px);
-            display: none;
-            z-index: 6;
-            pointer-events: none;
-        }
-        #touchHint.active { display: block; }
-        #virtualHint {
-            position: absolute;
-            bottom: clamp(60px, 15vh, 120px);
-            left: 0;
-            right: 0;
-            text-align: center;
-            color: rgba(255,255,255,0.1);
-            font-size: clamp(12px, 3vw, 14px);
-            display: none;
-            z-index: 6;
-            pointer-events: none;
-            letter-spacing: 2px;
-        }
-        #virtualHint.active { display: block; }
-        #pauseScreen h2 {
-            font-size: clamp(28px, 8vw, 36px);
-            margin-bottom: 20px;
-            color: #88ccff;
-        }
-        #pauseScreen .btn-secondary {
-            background: rgba(255,255,255,0.1);
-            color: #88ccff;
-            border: 1px solid rgba(136,204,255,0.3);
-            padding: 12px 36px;
-            font-size: clamp(16px, 4vw, 18px);
-            border-radius: 30px;
-            cursor: pointer;
-            margin-top: 10px;
-            touch-action: manipulation;
-        }
-        #pauseScreen .btn-secondary:active {
-            background: rgba(255,255,255,0.2);
-        }
-        @supports (padding: max(0px)) {
-            #score, #highScore {
-                left: max(clamp(10px, 2vw, 15px), env(safe-area-inset-left));
-            }
-            #lives, #pauseBtn {
-                right: max(clamp(10px, 2vw, 15px), env(safe-area-inset-right));
-            }
+        .new-record {
+            color: #ffaa00;
+            font-size: clamp(16px, 4.5vw, 20px);
+            margin-bottom: 15px;
         }
     </style>
 </head>
@@ -221,92 +132,76 @@
     <div id="ui">
         <div id="startScreen" class="active">
             <h1>✈ 飞机大战</h1>
-            <p>👆 触摸屏幕控制飞机 · 自动开火<br>手指滑动即可移动 · 击落敌机得分</p>
+            <p>触摸/鼠标控制飞机 · 自动开火<br>WASD键盘也可控制 · 击落敌机得分</p>
             <button class="btn" id="startBtn">开始游戏</button>
         </div>
         <div id="gameOverScreen">
             <h1>💥 游戏结束</h1>
             <p class="sub-text">你的得分</p>
             <p class="final-score" id="finalScore">0</p>
-            <p class="best-score">🏆 最高分: <span id="bestScoreDisplay">0</span></p>
+            <p class="high-score-text" id="highScoreText"></p>
+            <p class="new-record" id="newRecord"></p>
             <button class="btn" id="restartBtn">再来一局</button>
         </div>
-        <div id="pauseScreen">
-            <h2>⏸ 暂停</h2>
-            <button class="btn" id="resumeBtn">继续游戏</button>
-            <br>
-            <button class="btn btn-secondary" id="quitBtn">退出</button>
-        </div>
     </div>
-    <div id="score" class="active">得分: <span id="scoreNum">0</span></div>
-    <div id="highScore" class="active">🏆 最高: <span id="highScoreNum">0</span></div>
+    <div id="score">得分: <span id="scoreNum">0</span></div>
     <div id="lives">❤️ <span id="livesNum">3</span></div>
-    <div id="pauseBtn" class="active">⏸</div>
-    <div id="touchHint" class="active">👆 触摸滑动控制飞机</div>
-    <div id="virtualHint">← 滑动 →</div>
+    <div id="highScore">🏆 最高: <span id="highScoreNum">0</span></div>
 </div>
 <script>
-// ==================== 画布自适应 ====================
 const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
-const DESIGN_W = 480;
-const DESIGN_H = 780;
+const W = 480, H = 720;
 
-function resizeCanvas() {
-    const container = document.getElementById('gameContainer');
-    const rect = container.getBoundingClientRect();
-    const dpr = Math.min(window.devicePixelRatio || 1, 2);
-    const w = rect.width;
-    const h = rect.height;
-    canvas.width = DESIGN_W * dpr;
-    canvas.height = DESIGN_H * dpr;
-    canvas.style.width = w + 'px';
-    canvas.style.height = h + 'px';
-    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-    return { w, h, dpr };
-}
-resizeCanvas();
-window.addEventListener('resize', resizeCanvas);
-
-// ==================== DOM 元素 ====================
+// DOM
 const startScreen = document.getElementById('startScreen');
 const gameOverScreen = document.getElementById('gameOverScreen');
-const pauseScreen = document.getElementById('pauseScreen');
 const scoreEl = document.getElementById('score');
-const scoreNum = document.getElementById('scoreNum');
-const finalScore = document.getElementById('finalScore');
-const highScoreNum = document.getElementById('highScoreNum');
-const bestScoreDisplay = document.getElementById('bestScoreDisplay');
 const livesEl = document.getElementById('lives');
+const highScoreEl = document.getElementById('highScore');
+const scoreNum = document.getElementById('scoreNum');
 const livesNum = document.getElementById('livesNum');
-const touchHint = document.getElementById('touchHint');
-const virtualHint = document.getElementById('virtualHint');
-const startBtn = document.getElementById('startBtn');
-const restartBtn = document.getElementById('restartBtn');
-const resumeBtn = document.getElementById('resumeBtn');
-const quitBtn = document.getElementById('quitBtn');
-const pauseBtn = document.getElementById('pauseBtn');
+const highScoreNum = document.getElementById('highScoreNum');
+const finalScoreEl = document.getElementById('finalScore');
+const highScoreText = document.getElementById('highScoreText');
+const newRecord = document.getElementById('newRecord');
 
-// ==================== 最高分 localStorage ====================
+function resize() {
+    var cw = document.getElementById('gameContainer').clientWidth;
+    var ch = document.getElementById('gameContainer').clientHeight;
+    canvas.width = W;
+    canvas.height = H;
+    canvas.style.width = cw + 'px';
+    canvas.style.height = ch + 'px';
+}
+resize();
+window.addEventListener('resize', resize);
+
+function canvasPos(clientX, clientY) {
+    var r = canvas.getBoundingClientRect();
+    return {
+        x: (clientX - r.left) / r.width * W,
+        y: (clientY - r.top) / r.height * H
+    };
+}
+
+// High score
 function getHighScore() {
     return parseInt(localStorage.getItem('planeWarHighScore') || '0');
 }
-function setHighScore(score) {
-    const current = getHighScore();
-    if (score > current) {
-        localStorage.setItem('planeWarHighScore', score);
-        return true;
-    }
+function saveHighScore(s) {
+    var prev = getHighScore();
+    if (s > prev) { localStorage.setItem('planeWarHighScore', s); return true; }
     return false;
 }
-function updateHighScoreUI() {
-    highScoreNum.textContent = getHighScore();
-}
+highScoreNum.textContent = getHighScore();
 
-// ==================== 游戏核心 ====================
+// Game
+var game = null;
+
 class Game {
     constructor() {
-        this.player = { x: DESIGN_W / 2, y: DESIGN_H - 100, w: 40, h: 50 };
+        this.player = { x: W/2, y: H-80, w: 40, h: 50 };
         this.bullets = [];
         this.enemies = [];
         this.stars = [];
@@ -314,270 +209,197 @@ class Game {
         this.score = 0;
         this.lives = 3;
         this.running = true;
-        this.paused = false;
-        this.invincible = false;
-        this.invincibleTimer = 0;
+        this.invincible = 0;
         this.frame = 0;
         this.shootTimer = 0;
-        this.enemySpawnTimer = 0;
+        this.enemyTimer = 0;
         this.difficulty = 1;
-        this.animId = null;
-        this.touchX = this.player.x;
-        this.touchY = this.player.y;
-        this.touchActive = false;
-        this.keys = { w: false, a: false, s: false, d: false, up: false, down: false, left: false, right: false };
+        this.targetX = this.player.x;
+        this.targetY = this.player.y;
+        this.keys = {};
+        this.touchId = null;
 
-        for (let i = 0; i < 80; i++) {
+        // Stars
+        for (var i = 0; i < 80; i++) {
             this.stars.push({
-                x: Math.random() * DESIGN_W,
-                y: Math.random() * DESIGN_H,
-                size: Math.random() * 2 + 0.5,
-                speed: Math.random() * 2 + 0.5,
-                brightness: Math.random() * 0.5 + 0.5
+                x: Math.random() * W, y: Math.random() * H,
+                s: Math.random() * 2 + 0.5,
+                v: Math.random() * 2 + 0.5,
+                b: Math.random() * 0.5 + 0.5
             });
         }
         this.bindEvents();
     }
 
-    canvasToGame(clientX, clientY) {
-        const rect = canvas.getBoundingClientRect();
-        return {
-            x: (clientX - rect.left) / rect.width * DESIGN_W,
-            y: (clientY - rect.top) / rect.height * DESIGN_H
-        };
-    }
-
     bindEvents() {
-        // 触摸
-        this.onTouchStart = (e) => {
+        // Touch
+        var self = this;
+        canvas.addEventListener('touchstart', function(e) {
             e.preventDefault();
-            const t = e.touches[0];
-            const pos = this.canvasToGame(t.clientX, t.clientY);
-            this.touchX = pos.x;
-            this.touchY = pos.y;
-            this.touchActive = true;
-        };
-        this.onTouchMove = (e) => {
+            var p = canvasPos(e.touches[0].clientX, e.touches[0].clientY);
+            self.targetX = p.x; self.targetY = p.y;
+            self.touchId = e.touches[0].identifier;
+        }, {passive: false});
+        canvas.addEventListener('touchmove', function(e) {
             e.preventDefault();
-            const t = e.touches[0];
-            const pos = this.canvasToGame(t.clientX, t.clientY);
-            this.touchX = pos.x;
-            this.touchY = pos.y;
-            this.touchActive = true;
-        };
-        this.onTouchEnd = (e) => { e.preventDefault(); };
-        this.onTouchCancel = (e) => { e.preventDefault(); this.touchActive = false; };
-        canvas.addEventListener('touchstart', this.onTouchStart, { passive: false });
-        canvas.addEventListener('touchmove', this.onTouchMove, { passive: false });
-        canvas.addEventListener('touchend', this.onTouchEnd, { passive: false });
-        canvas.addEventListener('touchcancel', this.onTouchCancel, { passive: false });
+            for (var i = 0; i < e.touches.length; i++) {
+                if (e.touches[i].identifier === self.touchId) {
+                    var p = canvasPos(e.touches[i].clientX, e.touches[i].clientY);
+                    self.targetX = p.x; self.targetY = p.y;
+                }
+            }
+        }, {passive: false});
+        canvas.addEventListener('touchend', function(e) { self.touchId = null; });
 
-        // 鼠标（PC）
-        this.onMouseMove = (e) => {
-            const pos = this.canvasToGame(e.clientX, e.clientY);
-            this.touchX = pos.x;
-            this.touchY = pos.y;
-            this.touchActive = true;
-        };
-        canvas.addEventListener('mousemove', this.onMouseMove);
+        // Mouse
+        canvas.addEventListener('mousemove', function(e) {
+            var p = canvasPos(e.clientX, e.clientY);
+            self.targetX = p.x; self.targetY = p.y;
+        });
 
-        // 键盘
-        this.onKeyDown = (e) => {
-            const key = e.key.toLowerCase();
-            if (key === 'w' || key === 'arrowup')    { this.keys.w = true; this.keys.up = true; e.preventDefault(); }
-            if (key === 's' || key === 'arrowdown')  { this.keys.s = true; this.keys.down = true; e.preventDefault(); }
-            if (key === 'a' || key === 'arrowleft')  { this.keys.a = true; this.keys.left = true; e.preventDefault(); }
-            if (key === 'd' || key === 'arrowright') { this.keys.d = true; this.keys.right = true; e.preventDefault(); }
-            if (key === 'p' || key === 'escape')     { this.togglePause(); e.preventDefault(); }
-        };
-        this.onKeyUp = (e) => {
-            const key = e.key.toLowerCase();
-            if (key === 'w' || key === 'arrowup')    { this.keys.w = false; this.keys.up = false; }
-            if (key === 's' || key === 'arrowdown')  { this.keys.s = false; this.keys.down = false; }
-            if (key === 'a' || key === 'arrowleft')  { this.keys.a = false; this.keys.left = false; }
-            if (key === 'd' || key === 'arrowright') { this.keys.d = false; this.keys.right = false; }
-        };
-        window.addEventListener('keydown', this.onKeyDown);
-        window.addEventListener('keyup', this.onKeyUp);
-
-        // 暂停按钮
-        this.onPauseClick = () => this.togglePause();
-        pauseBtn.addEventListener('click', this.onPauseClick);
-        pauseBtn.addEventListener('touchend', (e) => { e.preventDefault(); this.togglePause(); });
-    }
-
-    destroy() {
-        canvas.removeEventListener('touchstart', this.onTouchStart);
-        canvas.removeEventListener('touchmove', this.onTouchMove);
-        canvas.removeEventListener('touchend', this.onTouchEnd);
-        canvas.removeEventListener('touchcancel', this.onTouchCancel);
-        canvas.removeEventListener('mousemove', this.onMouseMove);
-        window.removeEventListener('keydown', this.onKeyDown);
-        window.removeEventListener('keyup', this.onKeyUp);
-        pauseBtn.removeEventListener('click', this.onPauseClick);
-    }
-
-    togglePause() {
-        if (!this.running) return;
-        this.paused = !this.paused;
-        if (this.paused) {
-            pauseScreen.classList.add('active');
-            pauseBtn.textContent = '▶';
-        } else {
-            pauseScreen.classList.remove('active');
-            pauseBtn.textContent = '⏸';
-        }
+        // Keyboard
+        window.addEventListener('keydown', function(e) {
+            self.keys[e.key.toLowerCase()] = true;
+            if (['arrowup','arrowdown','arrowleft','arrowright','w','a','s','d'].includes(e.key.toLowerCase())) {
+                e.preventDefault();
+            }
+        });
+        window.addEventListener('keyup', function(e) {
+            self.keys[e.key.toLowerCase()] = false;
+        });
     }
 
     spawnEnemy() {
-        const types = [
-            { w: 30, h: 30, hp: 1, speed: 1.5 + this.difficulty * 0.2, color: '#ff4444', score: 10 },
-            { w: 40, h: 40, hp: 2, speed: 1 + this.difficulty * 0.15, color: '#ff8800', score: 20 },
-            { w: 50, h: 45, hp: 3, speed: 0.7 + this.difficulty * 0.1, color: '#cc00ff', score: 30 },
+        var types = [
+            {w:30,h:30,hp:1,speed:1.5+this.difficulty*0.2,c:'#ff4444',s:10},
+            {w:40,h:40,hp:2,speed:1+this.difficulty*0.15,c:'#ff8800',s:20},
+            {w:48,h:44,hp:3,speed:0.7+this.difficulty*0.1,c:'#cc00ff',s:30}
         ];
-        const type = Math.random() < 0.6 ? types[0] : Math.random() < 0.8 ? types[1] : types[2];
+        var t = Math.random() < 0.6 ? types[0] : Math.random() < 0.8 ? types[1] : types[2];
         this.enemies.push({
-            x: Math.random() * (DESIGN_W - type.w) + type.w / 2,
-            y: -type.h,
-            ...type,
-            vx: (Math.random() - 0.5) * 0.5,
+            x: Math.random()*(W-t.w)+t.w/2, y: -t.h,
+            w: t.w, h: t.h, hp: t.hp, speed: t.speed, c: t.c, score: t.s,
+            vx: (Math.random()-0.5)*0.8
         });
     }
 
     shoot() {
-        this.bullets.push({ x: this.player.x - 3, y: this.player.y - 25, w: 6, h: 12, speed: 7 });
-        this.bullets.push({ x: this.player.x - 3, y: this.player.y - 25, w: 6, h: 12, speed: 7 });
+        this.bullets.push({x:this.player.x-3,y:this.player.y-25,w:6,h:12,speed:8});
+        this.bullets.push({x:this.player.x-3,y:this.player.y-25,w:6,h:12,speed:8});
     }
 
-    addExplosion(x, y, color) {
-        for (let i = 0; i < 15; i++) {
-            const angle = Math.random() * Math.PI * 2;
-            const speed = Math.random() * 4 + 1;
+    explode(x, y, c) {
+        for (var i = 0; i < 12; i++) {
+            var a = Math.random()*Math.PI*2;
+            var sp = Math.random()*3+1;
             this.explosions.push({
-                x, y,
-                vx: Math.cos(angle) * speed,
-                vy: Math.sin(angle) * speed,
-                life: 30 + Math.random() * 20,
-                maxLife: 50,
-                size: Math.random() * 4 + 2,
-                color: color || '#ffaa00'
+                x:x,y:y,vx:Math.cos(a)*sp,vy:Math.sin(a)*sp,
+                life:25+Math.random()*20, maxLife:45,
+                size:Math.random()*3+2,c:c||'#ffaa00'
             });
         }
     }
 
     update() {
-        if (!this.running || this.paused) return;
+        if (!this.running) return;
         this.frame++;
+        if (this.invincible > 0) this.invincible--;
 
-        let targetX = this.player.x;
-        let targetY = this.player.y;
+        // Movement: keyboard priority, then touch/mouse
+        var kx = 0, ky = 0;
+        if (this.keys['a'] || this.keys['arrowleft']) kx = -1;
+        if (this.keys['d'] || this.keys['arrowright']) kx = 1;
+        if (this.keys['w'] || this.keys['arrowup']) ky = -1;
+        if (this.keys['s'] || this.keys['arrowdown']) ky = 1;
 
-        if (this.touchActive) {
-            targetX = this.touchX;
-            targetY = this.touchY;
-        }
-
-        let kx = 0, ky = 0;
-        if (this.keys.w || this.keys.up) ky -= 1;
-        if (this.keys.s || this.keys.down) ky += 1;
-        if (this.keys.a || this.keys.left) kx -= 1;
-        if (this.keys.d || this.keys.right) kx += 1;
-        if (kx !== 0 && ky !== 0) {
-            const len = Math.sqrt(kx * kx + ky * ky);
-            kx /= len;
-            ky /= len;
-        }
         if (kx !== 0 || ky !== 0) {
-            targetX = this.player.x + kx * 5;
-            targetY = this.player.y + ky * 5;
+            this.player.x += kx * 5;
+            this.player.y += ky * 5;
+        } else {
+            this.player.x += (this.targetX - this.player.x) * 0.12;
+            this.player.y += (this.targetY - this.player.y) * 0.12;
         }
+        this.player.x = Math.max(20, Math.min(W-20, this.player.x));
+        this.player.y = Math.max(30, Math.min(H-30, this.player.y));
 
-        this.player.x += (targetX - this.player.x) * 0.15;
-        this.player.y += (targetY - this.player.y) * 0.15;
-        this.player.x = Math.max(20, Math.min(DESIGN_W - 20, this.player.x));
-        this.player.y = Math.max(30, Math.min(DESIGN_H - 30, this.player.y));
-
-        if (this.invincible) {
-            this.invincibleTimer--;
-            if (this.invincibleTimer <= 0) this.invincible = false;
-        }
-
+        // Shoot
         this.shootTimer++;
         if (this.shootTimer > 8) { this.shoot(); this.shootTimer = 0; }
 
-        const spawnRate = Math.max(20, 60 - this.difficulty * 3);
-        this.enemySpawnTimer++;
-        if (this.enemySpawnTimer > spawnRate) { this.spawnEnemy(); this.enemySpawnTimer = 0; }
+        // Spawn
+        this.enemyTimer++;
+        if (this.enemyTimer > Math.max(18, 55 - this.difficulty*3)) {
+            this.spawnEnemy(); this.enemyTimer = 0;
+        }
 
-        for (let i = this.bullets.length - 1; i >= 0; i--) {
+        // Bullets
+        for (var i = this.bullets.length-1; i >= 0; i--) {
             this.bullets[i].y -= this.bullets[i].speed;
-            if (this.bullets[i].y + this.bullets[i].h < 0) this.bullets.splice(i, 1);
+            if (this.bullets[i].y < -20) this.bullets.splice(i,1);
         }
 
-        for (let i = this.enemies.length - 1; i >= 0; i--) {
-            const e = this.enemies[i];
-            e.y += e.speed;
-            e.x += e.vx;
-            if (e.x < e.w / 2 || e.x > DESIGN_W - e.w / 2) e.vx *= -1;
-            if (e.y > DESIGN_H + 50) this.enemies.splice(i, 1);
+        // Enemies
+        for (var i = this.enemies.length-1; i >= 0; i--) {
+            var e = this.enemies[i];
+            e.y += e.speed; e.x += e.vx;
+            if (e.x < e.w/2 || e.x > W-e.w/2) e.vx *= -1;
+            if (e.y > H+60) this.enemies.splice(i,1);
         }
 
-        for (let i = this.bullets.length - 1; i >= 0; i--) {
-            const b = this.bullets[i];
-            let bulletUsed = false;
-            for (let j = this.enemies.length - 1; j >= 0; j--) {
-                const e = this.enemies[j];
-                if (b.x < e.x + e.w / 2 && b.x + b.w > e.x - e.w / 2 &&
-                    b.y < e.y + e.h / 2 && b.y + b.h > e.y - e.h / 2) {
-                    e.hp--;
-                    bulletUsed = true;
+        // Bullet-enemy collision
+        for (var i = this.bullets.length-1; i >= 0; i--) {
+            var b = this.bullets[i], hit = false;
+            for (var j = this.enemies.length-1; j >= 0; j--) {
+                var e = this.enemies[j];
+                if (b.x < e.x+e.w/2 && b.x+b.w > e.x-e.w/2 &&
+                    b.y < e.y+e.h/2 && b.y+b.h > e.y-e.h/2) {
+                    e.hp--; hit = true;
                     if (e.hp <= 0) {
                         this.score += e.score;
-                        this.addExplosion(e.x, e.y, e.color);
-                        this.enemies.splice(j, 1);
-                        this.difficulty = Math.min(10, 1 + Math.floor(this.score / 100));
+                        this.explode(e.x, e.y, e.c);
+                        this.enemies.splice(j,1);
+                        this.difficulty = Math.min(12, 1 + Math.floor(this.score/80));
                     }
                     break;
                 }
             }
-            if (bulletUsed) this.bullets.splice(i, 1);
+            if (hit) this.bullets.splice(i,1);
         }
 
-        const p = this.player;
-        if (!this.invincible) {
-            for (let j = this.enemies.length - 1; j >= 0; j--) {
-                const e = this.enemies[j];
-                if (p.x - p.w / 2 < e.x + e.w / 2 && p.x + p.w / 2 > e.x - e.w / 2 &&
-                    p.y - p.h / 2 < e.y + e.h / 2 && p.y + p.h / 2 > e.y - e.h / 2) {
+        // Player-enemy collision
+        if (this.invincible === 0) {
+            var p = this.player;
+            for (var j = this.enemies.length-1; j >= 0; j--) {
+                var e = this.enemies[j];
+                if (p.x-p.w/2 < e.x+e.w/2 && p.x+p.w/2 > e.x-e.w/2 &&
+                    p.y-p.h/2 < e.y+e.h/2 && p.y+p.h/2 > e.y-e.h/2) {
+                    this.explode(p.x, p.y, '#00ccff');
+                    this.explode(e.x, e.y, e.c);
+                    this.enemies.splice(j,1);
                     this.lives--;
-                    this.addExplosion(p.x, p.y, '#00ccff');
-                    this.addExplosion(e.x, e.y, e.color);
-                    this.enemies.splice(j, 1);
+                    this.invincible = 80;
                     if (this.lives <= 0) {
                         this.running = false;
                         this.enemies = [];
                         this.bullets = [];
-                        return;
                     }
-                    this.invincible = true;
-                    this.invincibleTimer = 120;
                     break;
                 }
             }
         }
 
-        for (let i = this.explosions.length - 1; i >= 0; i--) {
-            const ex = this.explosions[i];
-            ex.x += ex.vx;
-            ex.y += ex.vy;
-            ex.life--;
-            ex.vy += 0.05;
-            if (ex.life <= 0) this.explosions.splice(i, 1);
+        // Explosions
+        for (var i = this.explosions.length-1; i >= 0; i--) {
+            var ex = this.explosions[i];
+            ex.x += ex.vx; ex.y += ex.vy;
+            ex.vy += 0.04; ex.life--;
+            if (ex.life <= 0) this.explosions.splice(i,1);
         }
 
-        for (const star of this.stars) {
-            star.y += star.speed;
-            if (star.y > DESIGN_H) { star.y = 0; star.x = Math.random() * DESIGN_W; }
+        // Stars
+        for (var s of this.stars) {
+            s.y += s.v;
+            if (s.y > H) { s.y = 0; s.x = Math.random()*W; }
         }
 
         scoreNum.textContent = this.score;
@@ -586,196 +408,138 @@ class Game {
 
     draw() {
         ctx.fillStyle = '#0a0a2e';
-        ctx.fillRect(0, 0, DESIGN_W, DESIGN_H);
+        ctx.fillRect(0, 0, W, H);
 
-        for (const star of this.stars) {
-            const alpha = star.brightness * (0.6 + 0.4 * Math.sin(this.frame * 0.02 + star.x));
-            ctx.fillStyle = `rgba(200, 220, 255, ${alpha})`;
+        // Stars
+        for (var s of this.stars) {
+            var a = s.b * (0.6+0.4*Math.sin(this.frame*0.02+s.x));
+            ctx.fillStyle = 'rgba(200,220,255,'+a+')';
             ctx.beginPath();
-            ctx.arc(star.x, star.y, star.size, 0, Math.PI * 2);
+            ctx.arc(s.x, s.y, s.s, 0, Math.PI*2);
             ctx.fill();
         }
 
-        for (const b of this.bullets) {
-            const grad = ctx.createLinearGradient(b.x, b.y, b.x + b.w, b.y + b.h);
-            grad.addColorStop(0, '#00ffff');
-            grad.addColorStop(1, '#0088ff');
-            ctx.fillStyle = grad;
-            ctx.shadowColor = '#00ffff';
-            ctx.shadowBlur = 8;
-            ctx.fillRect(b.x, b.y, b.w, b.h);
+        // Bullets
+        for (var b of this.bullets) {
+            var g = ctx.createLinearGradient(b.x,b.y,b.x+b.w,b.y+b.h);
+            g.addColorStop(0,'#00ffff'); g.addColorStop(1,'#0088ff');
+            ctx.fillStyle = g;
+            ctx.shadowColor = '#00ffff'; ctx.shadowBlur = 6;
+            ctx.fillRect(b.x,b.y,b.w,b.h);
             ctx.shadowBlur = 0;
         }
 
-        for (const e of this.enemies) {
-            ctx.shadowColor = e.color;
-            ctx.shadowBlur = 10;
-            ctx.fillStyle = e.color;
+        // Enemies
+        for (var e of this.enemies) {
+            ctx.shadowColor = e.c; ctx.shadowBlur = 8;
+            ctx.fillStyle = e.c;
             ctx.beginPath();
-            ctx.moveTo(e.x, e.y - e.h / 2);
-            ctx.lineTo(e.x - e.w / 2, e.y + e.h / 4);
-            ctx.lineTo(e.x - e.w / 4, e.y + e.h / 2);
-            ctx.lineTo(e.x + e.w / 4, e.y + e.h / 2);
-            ctx.lineTo(e.x + e.w / 2, e.y + e.h / 4);
+            ctx.moveTo(e.x, e.y-e.h/2);
+            ctx.lineTo(e.x-e.w/2, e.y+e.h/4);
+            ctx.lineTo(e.x-e.w/4, e.y+e.h/2);
+            ctx.lineTo(e.x+e.w/4, e.y+e.h/2);
+            ctx.lineTo(e.x+e.w/2, e.y+e.h/4);
             ctx.closePath();
             ctx.fill();
             ctx.fillStyle = 'rgba(255,255,255,0.3)';
             ctx.beginPath();
-            ctx.ellipse(e.x, e.y - e.h / 6, e.w / 6, e.h / 5, 0, 0, Math.PI * 2);
+            ctx.ellipse(e.x, e.y-e.h/6, e.w/6, e.h/5, 0, 0, Math.PI*2);
             ctx.fill();
-            if (e.hp > 1) {
-                ctx.fillStyle = '#fff';
-                ctx.font = '12px Arial';
-                ctx.textAlign = 'center';
-                ctx.fillText('♥'.repeat(e.hp), e.x, e.y - e.h / 2 - 8);
-            }
             ctx.shadowBlur = 0;
         }
 
-        if (this.running || this.explosions.length > 0) {
-            const p = this.player;
-            if (!this.running || !this.invincible || Math.floor(this.frame / 6) % 2 === 0) {
-                ctx.shadowColor = '#00ccff';
-                ctx.shadowBlur = 20;
-                const grad = ctx.createLinearGradient(p.x, p.y - p.h / 2, p.x, p.y + p.h / 2);
-                grad.addColorStop(0, '#00ccff');
-                grad.addColorStop(1, '#0066ff');
-                ctx.fillStyle = grad;
-                ctx.beginPath();
-                ctx.moveTo(p.x, p.y - p.h / 2);
-                ctx.lineTo(p.x - p.w / 2, p.y + p.h / 6);
-                ctx.lineTo(p.x - p.w / 3, p.y + p.h / 4);
-                ctx.lineTo(p.x - p.w / 4, p.y + p.h / 2);
-                ctx.lineTo(p.x, p.y + p.h / 3);
-                ctx.lineTo(p.x + p.w / 4, p.y + p.h / 2);
-                ctx.lineTo(p.x + p.w / 3, p.y + p.h / 4);
-                ctx.lineTo(p.x + p.w / 2, p.y + p.h / 6);
-                ctx.closePath();
-                ctx.fill();
-                ctx.fillStyle = 'rgba(100, 200, 255, 0.4)';
-                ctx.beginPath();
-                ctx.ellipse(p.x, p.y - p.h / 6, p.w / 7, p.h / 6, 0, 0, Math.PI * 2);
-                ctx.fill();
-                ctx.shadowBlur = 15;
-                ctx.fillStyle = 'rgba(255, 150, 0, 0.6)';
-                ctx.beginPath();
-                ctx.ellipse(p.x - p.w / 5, p.y + p.h / 3, 3, 8, 0, 0, Math.PI * 2);
-                ctx.fill();
-                ctx.beginPath();
-                ctx.ellipse(p.x + p.w / 5, p.y + p.h / 3, 3, 8, 0, 0, Math.PI * 2);
-                ctx.fill();
-                ctx.shadowBlur = 0;
+        // Player
+        if (this.running) {
+            var p = this.player;
+            if (this.invincible > 0 && Math.floor(this.invincible/6)%2 === 0) {
+                ctx.globalAlpha = 0.4;
             }
-        }
-
-        for (const ex of this.explosions) {
-            const alpha = ex.life / ex.maxLife;
-            ctx.globalAlpha = alpha;
-            ctx.fillStyle = ex.color;
-            ctx.shadowColor = '#ffaa00';
-            ctx.shadowBlur = 5;
+            ctx.shadowColor = '#00ccff'; ctx.shadowBlur = 15;
+            var g = ctx.createLinearGradient(p.x,p.y-p.h/2,p.x,p.y+p.h/2);
+            g.addColorStop(0,'#00ccff'); g.addColorStop(1,'#0066ff');
+            ctx.fillStyle = g;
             ctx.beginPath();
-            ctx.arc(ex.x, ex.y, ex.size * (1 + (1 - alpha) * 0.5), 0, Math.PI * 2);
+            ctx.moveTo(p.x, p.y-p.h/2);
+            ctx.lineTo(p.x-p.w/2, p.y+p.h/6);
+            ctx.lineTo(p.x-p.w/3, p.y+p.h/4);
+            ctx.lineTo(p.x-p.w/4, p.y+p.h/2);
+            ctx.lineTo(p.x, p.y+p.h/3);
+            ctx.lineTo(p.x+p.w/4, p.y+p.h/2);
+            ctx.lineTo(p.x+p.w/3, p.y+p.h/4);
+            ctx.lineTo(p.x+p.w/2, p.y+p.h/6);
+            ctx.closePath();
+            ctx.fill();
+            ctx.fillStyle = 'rgba(100,200,255,0.4)';
+            ctx.beginPath();
+            ctx.ellipse(p.x, p.y-p.h/6, p.w/7, p.h/6, 0, 0, Math.PI*2);
+            ctx.fill();
+            // Engine glow
+            ctx.fillStyle = 'rgba(255,150,0,0.5)';
+            ctx.beginPath();
+            ctx.ellipse(p.x-p.w/5, p.y+p.h/3, 3, 7, 0, 0, Math.PI*2);
+            ctx.fill();
+            ctx.beginPath();
+            ctx.ellipse(p.x+p.w/5, p.y+p.h/3, 3, 7, 0, 0, Math.PI*2);
             ctx.fill();
             ctx.globalAlpha = 1;
             ctx.shadowBlur = 0;
         }
 
-        if (this.paused) {
-            ctx.fillStyle = 'rgba(0, 0, 0, 0.4)';
-            ctx.fillRect(0, 0, DESIGN_W, DESIGN_H);
+        // Explosions
+        for (var ex of this.explosions) {
+            var a = ex.life/ex.maxLife;
+            ctx.globalAlpha = a;
+            ctx.fillStyle = ex.c;
+            ctx.shadowColor = '#ffaa00'; ctx.shadowBlur = 4;
+            ctx.beginPath();
+            ctx.arc(ex.x, ex.y, ex.size*(1+(1-a)*0.5), 0, Math.PI*2);
+            ctx.fill();
+            ctx.globalAlpha = 1;
+            ctx.shadowBlur = 0;
         }
     }
 
     loop() {
-        if (!this.running) {
-            this.update();
-            this.draw();
-            if (this.explosions.length === 0) {
-                cancelAnimationFrame(this.animId);
-                showGameOver(this.score);
-                return;
-            }
-            this.animId = requestAnimationFrame(() => this.loop());
-            return;
-        }
         this.update();
         this.draw();
-        this.animId = requestAnimationFrame(() => this.loop());
+        if (!this.running && this.explosions.length === 0) {
+            cancelAnimationFrame(this.animId);
+            showGameOver(this.score);
+            return;
+        }
+        this.animId = requestAnimationFrame(this.loop.bind(this));
     }
 }
 
-// ==================== UI 控制 ====================
 function showGameOver(score) {
-    const isNewBest = setHighScore(score);
-    updateHighScoreUI();
-    bestScoreDisplay.textContent = getHighScore();
+    var isNew = saveHighScore(score);
+    scoreEl.classList.remove('active');
+    livesEl.classList.remove('active');
+    highScoreEl.classList.remove('active');
     gameOverScreen.classList.add('active');
-    finalScore.textContent = score;
-    pauseBtn.classList.remove('active');
+    finalScoreEl.textContent = score;
+    highScoreText.textContent = '🏆 最高分: ' + getHighScore();
+    newRecord.textContent = isNew ? '🎉 新纪录！' : '';
+    highScoreNum.textContent = getHighScore();
 }
 
 function startGame() {
     if (game) {
-        game.destroy();
         if (game.animId) cancelAnimationFrame(game.animId);
     }
     startScreen.classList.remove('active');
     gameOverScreen.classList.remove('active');
-    pauseScreen.classList.remove('active');
     scoreEl.classList.add('active');
     livesEl.classList.add('active');
-    touchHint.classList.add('active');
-    pauseBtn.classList.add('active');
-    pauseBtn.textContent = '⏸';
+    highScoreEl.classList.add('active');
     scoreNum.textContent = '0';
     livesNum.textContent = '3';
-    updateHighScoreUI();
     game = new Game();
     game.loop();
 }
 
-resumeBtn.addEventListener('click', () => { if (game) game.togglePause(); });
-resumeBtn.addEventListener('touchend', (e) => { e.preventDefault(); if (game) game.togglePause(); });
-quitBtn.addEventListener('click', () => {
-    if (game) {
-        game.paused = false;
-        game.running = false;
-        cancelAnimationFrame(game.animId);
-        game.destroy();
-        game = null;
-    }
-    gameOverScreen.classList.remove('active');
-    pauseScreen.classList.remove('active');
-    scoreEl.classList.remove('active');
-    livesEl.classList.remove('active');
-    touchHint.classList.remove('active');
-    pauseBtn.classList.remove('active');
-    startScreen.classList.add('active');
-});
-quitBtn.addEventListener('touchend', (e) => {
-    e.preventDefault();
-    if (game) {
-        game.paused = false;
-        game.running = false;
-        cancelAnimationFrame(game.animId);
-        game.destroy();
-        game = null;
-    }
-    gameOverScreen.classList.remove('active');
-    pauseScreen.classList.remove('active');
-    scoreEl.classList.remove('active');
-    livesEl.classList.remove('active');
-    touchHint.classList.remove('active');
-    pauseBtn.classList.remove('active');
-    startScreen.classList.add('active');
-});
-
-updateHighScoreUI();
-startBtn.addEventListener('click', startGame);
-startBtn.addEventListener('touchend', (e) => { e.preventDefault(); startGame(); });
-restartBtn.addEventListener('click', startGame);
-restartBtn.addEventListener('touchend', (e) => { e.preventDefault(); startGame(); });
+document.getElementById('startBtn').addEventListener('click', startGame);
+document.getElementById('restartBtn').addEventListener('click', startGame);
 </script>
 </body>
 </html>
