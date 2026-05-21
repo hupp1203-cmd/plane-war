@@ -301,7 +301,16 @@ class Game {
     }
 
     update() {
-        if (!this.running) return;
+        if (!this.running) {
+            // 游戏结束后继续更新爆炸效果
+            for (var i = this.explosions.length-1; i >= 0; i--) {
+                var ex = this.explosions[i];
+                ex.x += ex.vx; ex.y += ex.vy;
+                ex.vy += 0.04; ex.life--;
+                if (ex.life <= 0) this.explosions.splice(i,1);
+            }
+            return;
+        }
         this.frame++;
         if (this.invincible > 0) this.invincible--;
 
